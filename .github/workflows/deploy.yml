@@ -1,0 +1,39 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - main
+    # only run deploys when dist changes
+    paths:
+      - 'dist/**'
+
+concurrency: # prevent concurrent deploys doing strange things
+  group: deploy-to-neocities
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    # # Set up any tools and build steps here
+    # # This example uses a Node.js toolchain to build a site
+    # - name: Use Node.js
+    #   uses: actions/setup-node@v1
+    #   with:
+    #     node-version: lts/*
+    # - name: Install deps and build
+    #   run: |
+    #     npm i
+    #     npm run build
+    # When the dist_dir is ready, deploy it to neocities
+    # # get api key at
+    # https://neocities.org/settings/conorsheehan1#api_key
+    - name: Deploy to neocities
+      uses: bcomnes/deploy-to-neocities@v1
+      with:
+        api_token: ${{ secrets.NEOCITIES_API_TOKEN }}
+        cleanup: false
+        dist_dir: dist
